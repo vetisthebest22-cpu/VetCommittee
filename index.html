@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المنصة الأكاديمية - لجنة الطب والجراحة البيطرية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        purple: {
+                            50: '#faf5ff',
+                            100: '#f3e8ff',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        body { font-family: 'Cairo', sans-serif; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .slide-in { animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+        .popup-overlay { backdrop-filter: blur(5px); }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-purple-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-4 space-x-reverse">
+                    <img src="https://drive.google.com/uc?id=1z3uZjYrJyUJW20pFuxB18rclWWZVtEAP" alt="شعار المنصة" class="w-16 h-16 object-contain">
+
+                    <div class="relative">
+                        <img src="https://your-logo-url.com/logo.png" alt="شعار لجنة الطب والجراحة البيطرية" 
+                             class="w-16 h-16 rounded-full object-cover drop-shadow-lg border-2 border-purple-200"
+                             onerror="this.style.display='none';">
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-900">المنصة الأكاديمية</h1>
+                        <p class="text-sm text-purple-600">لجنة الطب والجراحة البيطرية</p>
+                    </div>
+                </div>
+                
+                <!-- Search Bar -->
+                <div class="hidden md:flex flex-1 max-w-md mx-8">
+                    <div class="relative w-full">
+                        <input type="text" placeholder="البحث عن مادة أو ملف..." 
+                               class="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <span class="text-gray-400">🔍</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Menu (Hidden by default) -->
+                <div id="userMenu" class="hidden flex items-center space-x-4 space-x-reverse">
+                    <!-- Notifications -->
+                    <div class="relative">
+                        <button id="notificationBtn" class="p-2 text-gray-600 hover:text-purple-600 relative">
+                            <span class="text-xl">🔔</span>
+                            <span id="notificationBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">2</span>
+                        </button>
+                        
+                        <!-- Notifications Popup -->
+                        <div id="notificationsPopup" class="absolute left-0 mt-2 w-80 bg-white rounded-lg shadow-lg border hidden z-50">
+                            <div class="p-4 border-b">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="font-semibold text-gray-900">الإشعارات</h3>
+                                    <button id="closeNotifications" class="text-gray-400 hover:text-gray-600">✕</button>
+                                </div>
+                            </div>
+                            <div class="max-h-64 overflow-y-auto">
+                                <div class="p-4 border-b hover:bg-gray-50">
+                                    <div class="flex items-start">
+                                        <span class="text-blue-500 ml-3">📅</span>
+                                        <div>
+                                            <p class="text-sm text-gray-900 font-medium">امتحان التشريح</p>
+                                            <p class="text-xs text-gray-500">غداً الساعة 10:00 صباحاً</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-4 border-b hover:bg-gray-50">
+                                    <div class="flex items-start">
+                                        <span class="text-green-500 ml-3">📝</span>
+                                        <div>
+                                            <p class="text-sm text-gray-900 font-medium">محتوى جديد</p>
+                                            <p class="text-xs text-gray-500">تم إضافة ملخصات جديدة للسنة الثالثة</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile -->
+                    <div class="relative">
+                        <button id="profileBtn" class="flex items-center space-x-2 space-x-reverse">
+                            <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
+                                <span id="userInitial" class="text-white text-sm font-medium">A</span>
+                            </div>
+                            <span id="userDisplayName" class="text-gray-700 font-medium">أحمد</span>
+                        </button>
+                        
+                        <!-- Profile Dropdown -->
+                        <div id="profileDropdown" class="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border hidden z-50">
+                            <div class="p-4 border-b">
+                                <p id="dropdownUsername" class="font-medium text-gray-900">أحمد محمد</p>
+                                <p id="dropdownYear" class="text-sm text-gray-500">السنة الثالثة</p>
+                            </div>
+                            <div class="py-2">
+                                <button class="w-full text-right px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">الملف الشخصي</button>
+                                <button class="w-full text-right px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">المفضلة</button>
+                                <button class="w-full text-right px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">الإعدادات</button>
+                                <hr class="my-2">
+                                <button id="logoutBtn" class="w-full text-right px-4 py-2 text-sm text-red-600 hover:bg-red-50">تسجيل الخروج</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Login Button -->
+                <button id="loginBtn" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+                    تسجيل الدخول
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 popup-overlay hidden z-50 flex items-center justify-center">
+        <div class="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4 fade-in">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-2xl">🏥</span>
+                </div>
+                <h2 id="modalTitle" class="text-2xl font-bold text-gray-900 mb-2">تسجيل الدخول</h2>
+                <p id="modalSubtitle" class="text-gray-600">أدخل بياناتك للوصول إلى المنصة</p>
+            </div>
+            
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">اسم المستخدم</label>
+                    <input type="text" id="username" required
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">كلمة المرور</label>
+                    <input type="password" id="password" required
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                </div>
+                <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-lg font-medium transition-colors">
+                    دخول
+                </button>
+            </form>
+            
+            <form id="registerForm" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">اسم المستخدم</label>
+                    <input type="text" id="regUsername" required
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">البريد الإلكتروني</label>
+                    <input type="email" id="regEmail" required
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">المستوى الدراسي</label>
+                    <select id="regYear" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        <option value="">اختر المستوى الدراسي</option>
+                        <option value="1">السنة الأولى</option>
+                        <option value="2">السنة الثانية</option>
+                        <option value="3">السنة الثالثة</option>
+                        <option value="4">السنة الرابعة</option>
+                        <option value="5">السنة الخامسة</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">كلمة المرور</label>
+                    <input type="password" id="regPassword" required
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                </div>
+                <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-lg font-medium transition-colors">
+                    إنشاء حساب
+                </button>
+            </form>
+            
+            <div class="mt-6 text-center">
+                <button id="toggleForm" class="text-purple-600 hover:text-purple-700 text-sm">
+                    ليس لديك حساب؟ إنشاء حساب جديد
+                </button>
+            </div>
+            
+            <button id="closeLogin" class="absolute top-4 left-4 text-gray-400 hover:text-gray-600">
+                <span class="text-xl">✕</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Welcome Popup -->
+    <div id="welcomePopup" class="fixed inset-0 bg-black bg-opacity-50 popup-overlay hidden z-50 flex items-center justify-center">
+        <div class="bg-white rounded-xl shadow-2xl p-8 max-w-lg w-full mx-4 fade-in">
+            <div class="text-center">
+                <div class="mx-auto mb-6">
+                   <img src="https://drive.google.com/uc?id=1z3uZjYrJyUJW20pFuxB18rclWWZVtEAP" alt="شعار المنصة" class="w-16 h-16 object-contain">
+                         class="w-20 h-20 rounded-full object-cover drop-shadow-lg border-2 border-purple-200 mx-auto"
+                         onerror="this.style.display='none';">
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">مرحبًا بك عزيزي طبيب الإنسانية <span id="welcomeUsername" class="text-purple-600"></span></h2>
+                <div class="text-right bg-purple-50 p-6 rounded-lg mb-6">
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        هذا الموقع مُصمّم من لجنة الطب والجراحة البيطرية خصيصًا لك ليكون خيرَ مُعين ورَفيق لك في سنواتك الدّراسية، فيشمل كافة المصادر اللازمة لمرحلة البيسك للسنوات الثلاث الأولى. 🌱
+                    </p>
+                    <p class="text-purple-600 font-medium mb-4">لا تنسونا بدعوة صالحة في ظهر الغيب 💜</p>
+                    <div class="text-sm text-gray-600">
+                        <p class="font-medium">الفريق الأكاديمي</p>
+                        <p>لجنة الطب والجراحة البيطرية</p>
+                    </div>
+                </div>
+                <button id="closeWelcome" class="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg font-medium transition-colors">
+                    ابدأ التصفح
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Announcements Section -->
+        <div class="bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl p-6 mb-8 text-white">
+            <h3 class="text-xl font-bold mb-2">📢 التحديثات والإعلانات الأكاديمية</h3>
+            <p class="opacity-90">مرحباً بكم في المنصة الأكاديمية الجديدة! تم إضافة محتوى جديد للسنة الثالثة.</p>
+        </div>
+
+        <div class="flex gap-8">
+            <!-- Sidebar -->
+            <div class="w-80 bg-white rounded-xl shadow-sm p-6 h-fit">
+                <!-- Tabs for logged in users -->
+                <div id="sidebarTabs" class="hidden mb-6">
+                    <div class="flex bg-gray-100 rounded-lg p-1">
+                        <button id="academicTab" class="flex-1 py-2 px-3 text-sm font-medium rounded-md bg-purple-600 text-white transition-colors">
+                            📚 المواد
+                        </button>
+                        <button id="examsTab" class="flex-1 py-2 px-3 text-sm font-medium rounded-md text-gray-600 hover:text-purple-600 transition-colors">
+                            📅 الامتحانات
+                        </button>
+                        <button id="chatTab" class="flex-1 py-2 px-3 text-sm font-medium rounded-md text-gray-600 hover:text-purple-600 transition-colors">
+                            💬 الدردشة
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Academic Content -->
+                <div id="academicContent">
+                    <h3 class="text-lg font-bold text-gray-900 mb-6">التقسيم الأكاديمي</h3>
+                </div>
+                
+                <!-- Exams Content -->
+                <div id="examsContent" class="hidden">
+                    <h3 class="text-lg font-bold text-gray-900 mb-6">جدول الامتحانات</h3>
+                    <div class="space-y-4">
+                        <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-semibold text-gray-900">التشريح</h4>
+                                <span class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">VET101</span>
+                            </div>
+                            <div class="text-sm text-gray-600 space-y-1">
+                                <p>📅 2024-01-15</p>
+                                <p>🕒 10:00 صباحاً</p>
+                                <p>📝 امتحان نهائي</p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-semibold text-gray-900">علم وظائف الأعضاء</h4>
+                                <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">VET102</span>
+                            </div>
+                            <div class="text-sm text-gray-600 space-y-1">
+                                <p>📅 2024-01-20</p>
+                                <p>🕒 2:00 مساءً</p>
+                                <p>📝 امتحان نصفي</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Chat Content -->
+                <div id="chatContent" class="hidden">
+                    <h3 class="text-lg font-bold text-gray-900 mb-6">الدردشة مع الإدارة</h3>
+                    <div class="bg-gray-50 rounded-lg p-4 h-64 overflow-y-auto mb-4" id="chatMessages">
+                        <div class="bg-purple-100 p-3 rounded-lg mr-8 mb-3">
+                            <p class="text-sm text-gray-700">مرحباً! كيف يمكننا مساعدتك؟</p>
+                            <span class="text-xs text-gray-500">الإدارة - 10:30</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="text" id="chatInput" placeholder="اكتب رسالتك..."
+                               class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm">
+                        <button id="sendChatBtn" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm">
+                            إرسال
+                        </button>
+                    </div>
+                </div>
+                
+                <h3 class="text-lg font-bold text-gray-900 mb-6">التقسيم الأكاديمي</h3>
+                
+                <div class="space-y-2">
+                    <div class="year-section">
+                        <button class="year-btn w-full text-right p-3 rounded-lg hover:bg-purple-50 transition-colors flex items-center justify-between" data-year="1">
+                            <span class="font-medium text-gray-700">السنة الأولى</span>
+                            <span class="text-purple-600 transform transition-transform">▼</span>
+                        </button>
+                        <div class="year-content hidden pl-4 mt-2 space-y-2">
+                            <div class="semester-section">
+                                <button class="semester-btn w-full text-right p-2 text-sm text-gray-600 hover:text-purple-600 flex items-center justify-between" data-semester="1">
+                                    <span>الفصل الأول</span>
+                                    <span class="transform transition-transform">▼</span>
+                                </button>
+                                <div class="semester-content hidden pl-4 mt-2 space-y-1">
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="slides">📑 سلايدات</button>
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="recordings">🎙️ ريكوردات</button>
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="summaries">📝 ملخصات</button>
+                                </div>
+                            </div>
+                            <div class="semester-section">
+                                <button class="semester-btn w-full text-right p-2 text-sm text-gray-600 hover:text-purple-600 flex items-center justify-between" data-semester="2">
+                                    <span>الفصل الثاني</span>
+                                    <span class="transform transition-transform">▼</span>
+                                </button>
+                                <div class="semester-content hidden pl-4 mt-2 space-y-1">
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="slides">📑 سلايدات</button>
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="recordings">🎙️ ريكوردات</button>
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="summaries">📝 ملخصات</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Repeat for other years -->
+                    <div class="year-section">
+                        <button class="year-btn w-full text-right p-3 rounded-lg hover:bg-purple-50 transition-colors flex items-center justify-between" data-year="2">
+                            <span class="font-medium text-gray-700">السنة الثانية</span>
+                            <span class="text-purple-600 transform transition-transform">▼</span>
+                        </button>
+                        <div class="year-content hidden pl-4 mt-2 space-y-2">
+                            <div class="semester-section">
+                                <button class="semester-btn w-full text-right p-2 text-sm text-gray-600 hover:text-purple-600 flex items-center justify-between" data-semester="1">
+                                    <span>الفصل الأول</span>
+                                    <span class="transform transition-transform">▼</span>
+                                </button>
+                                <div class="semester-content hidden pl-4 mt-2 space-y-1">
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="slides">📑 سلايدات</button>
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="recordings">🎙️ ريكوردات</button>
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="summaries">📝 ملخصات</button>
+                                </div>
+                            </div>
+                            <div class="semester-section">
+                                <button class="semester-btn w-full text-right p-2 text-sm text-gray-600 hover:text-purple-600 flex items-center justify-between" data-semester="2">
+                                    <span>الفصل الثاني</span>
+                                    <span class="transform transition-transform">▼</span>
+                                </button>
+                                <div class="semester-content hidden pl-4 mt-2 space-y-1">
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="slides">📑 سلايدات</button>
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="recordings">🎙️ ريكوردات</button>
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="summaries">📝 ملخصات</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="year-section">
+                        <button class="year-btn w-full text-right p-3 rounded-lg hover:bg-purple-50 transition-colors flex items-center justify-between" data-year="3">
+                            <span class="font-medium text-gray-700">السنة الثالثة</span>
+                            <span class="text-purple-600 transform transition-transform">▼</span>
+                        </button>
+                        <div class="year-content hidden pl-4 mt-2 space-y-2">
+                            <div class="semester-section">
+                                <button class="semester-btn w-full text-right p-2 text-sm text-gray-600 hover:text-purple-600 flex items-center justify-between" data-semester="1">
+                                    <span>الفصل الأول</span>
+                                    <span class="transform transition-transform">▼</span>
+                                </button>
+                                <div class="semester-content hidden pl-4 mt-2 space-y-1">
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="slides">📑 سلايدات</button>
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="recordings">🎙️ ريكوردات</button>
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="summaries">📝 ملخصات</button>
+                                </div>
+                            </div>
+                            <div class="semester-section">
+                                <button class="semester-btn w-full text-right p-2 text-sm text-gray-600 hover:text-purple-600 flex items-center justify-between" data-semester="2">
+                                    <span>الفصل الثاني</span>
+                                    <span class="transform transition-transform">▼</span>
+                                </button>
+                                <div class="semester-content hidden pl-4 mt-2 space-y-1">
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="slides">📑 سلايدات</button>
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="recordings">🎙️ ريكوردات</button>
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="summaries">📝 ملخصات</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="year-section">
+                        <button class="year-btn w-full text-right p-3 rounded-lg hover:bg-purple-50 transition-colors flex items-center justify-between" data-year="4">
+                            <span class="font-medium text-gray-700">السنة الرابعة</span>
+                            <span class="text-purple-600 transform transition-transform">▼</span>
+                        </button>
+                        <div class="year-content hidden pl-4 mt-2 space-y-2">
+                            <div class="semester-section">
+                                <button class="semester-btn w-full text-right p-2 text-sm text-gray-600 hover:text-purple-600 flex items-center justify-between" data-semester="1">
+                                    <span>الفصل الأول</span>
+                                    <span class="transform transition-transform">▼</span>
+                                </button>
+                                <div class="semester-content hidden pl-4 mt-2 space-y-1">
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="slides">📑 سلايدات</button>
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="recordings">🎙️ ريكوردات</button>
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="summaries">📝ملخصات</button>
+                                </div>
+                            </div>
+                            <div class="semester-section">
+                                <button class="semester-btn w-full text-right p-2 text-sm text-gray-600 hover:text-purple-600 flex items-center justify-between" data-semester="2">
+                                    <span>الفصل الثاني</span>
+                                    <span class="transform transition-transform">▼</span>
+                                </button>
+                                <div class="semester-content hidden pl-4 mt-2 space-y-1">
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="slides">📑 سلايدات</button>
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="recordings">🎙️ ريكوردات</button>
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="summaries">📝 ملخصات</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="year-section">
+                        <button class="year-btn w-full text-right p-3 rounded-lg hover:bg-purple-50 transition-colors flex items-center justify-between" data-year="5">
+                            <span class="font-medium text-gray-700">السنة الخامسة</span>
+                            <span class="text-purple-600 transform transition-transform">▼</span>
+                        </button>
+                        <div class="year-content hidden pl-4 mt-2 space-y-2">
+                            <div class="semester-section">
+                                <button class="semester-btn w-full text-right p-2 text-sm text-gray-600 hover:text-purple-600 flex items-center justify-between" data-semester="1">
+                                    <span>الفصل الأول</span>
+                                    <span class="transform transition-transform">▼</span>
+                                </button>
+                                <div class="semester-content hidden pl-4 mt-2 space-y-1">
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="slides">📑 سلايدات</button>
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="recordings">🎙️ ريكوردات</button>
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="summaries">📝 ملخصات</button>
+                                </div>
+                            </div>
+                            <div class="semester-section">
+                                <button class="semester-btn w-full text-right p-2 text-sm text-gray-600 hover:text-purple-600 flex items-center justify-between" data-semester="2">
+                                    <span>الفصل الثاني</span>
+                                    <span class="transform transition-transform">▼</span>
+                                </button>
+                                <div class="semester-content hidden pl-4 mt-2 space-y-1">
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="slides">📑 سلايدات</button>
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="recordings">🎙️ ريكوردات</button>
+                                    <button class="content-btn w-full text-right p-2 text-sm text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded" data-type="summaries">📝 ملخصات</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="flex-1">
+                <div id="contentArea" class="bg-white rounded-xl shadow-sm p-8">
+                    <div class="text-center py-16">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">مرحباً بك في المنصة الأكاديمية</h2>
+                        <p class="text-gray-600 mb-8">اختر السنة والفصل الدراسي من القائمة الجانبية للوصول إلى المحتوى الأكاديمي</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-2xl mx-auto">
+                            <div class="bg-purple-50 p-6 rounded-lg">
+                                <div class="text-3xl mb-3">📑</div>
+                                <h3 class="font-semibold text-gray-900 mb-2">سلايدات</h3>
+                                <p class="text-sm text-gray-600">عروض تقديمية شاملة لجميع المواد</p>
+                            </div>
+                            <div class="bg-purple-50 p-6 rounded-lg">
+                                <div class="text-3xl mb-3">🎙️</div>
+                                <h3 class="font-semibold text-gray-900 mb-2">ريكوردات</h3>
+                                <p class="text-sm text-gray-600">تسجيلات صوتية للمحاضرات</p>
+                            </div>
+                            <div class="bg-purple-50 p-6 rounded-lg">
+                                <div class="text-3xl mb-3">📝</div>
+                                <h3 class="font-semibold text-gray-900 mb-2">ملخصات</h3>
+                                <p class="text-sm text-gray-600">ملخصات مركزة وشاملة</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- File Upload Area -->
+                <div id="uploadArea" class="hidden bg-white rounded-xl shadow-sm p-8 mt-6">
+                    <div class="border-2 border-dashed border-purple-300 rounded-lg p-8 text-center">
+                        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-2xl">📁</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">رفع ملف جديد</h3>
+                        <p class="text-gray-600 mb-4">اسحب الملف هنا أو انقر للاختيار</p>
+                        <input type="file" id="fileInput" class="hidden" multiple>
+                        <button onclick="document.getElementById('fileInput').click()" 
+                                class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+                            اختيار ملف
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="text-center">
+                <div class="flex justify-center mb-4">
+                   <img src="https://drive.google.com/uc?id=1z3uZjYrJyUJW20pFuxB18rclWWZVtEAP" alt="شعار المنصة" class="w-16 h-16 object-contain"> 
+                         class="w-20 h-20 rounded-full object-cover drop-shadow-lg border-2 border-purple-200"
+                         onerror="this.style.display='none';">
+                </div>
+                <p class="text-gray-600">منصة أكاديمية مقدمة من لجنة الطب والجراحة البيطرية – كلية الطب البيطري</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // User data storage
+        let currentUser = null;
+        let userBookmarks = [];
+        let userProgress = {};
+
+        // Login functionality
+        document.getElementById('loginBtn').addEventListener('click', function() {
+            document.getElementById('loginModal').classList.remove('hidden');
+        });
+
+        document.getElementById('closeLogin').addEventListener('click', function() {
+            document.getElementById('loginModal').classList.add('hidden');
+        });
+
+        // Toggle between login and register forms
+        document.getElementById('toggleForm').addEventListener('click', function() {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalSubtitle = document.getElementById('modalSubtitle');
+            const toggleBtn = document.getElementById('toggleForm');
+
+            if (loginForm.classList.contains('hidden')) {
+                // Show login form
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+                modalTitle.textContent = 'تسجيل الدخول';
+                modalSubtitle.textContent = 'أدخل بياناتك للوصول إلى المنصة';
+                toggleBtn.textContent = 'ليس لديك حساب؟ إنشاء حساب جديد';
+            } else {
+                // Show register form
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+                modalTitle.textContent = 'إنشاء حساب جديد';
+                modalSubtitle.textContent = 'أدخل بياناتك لإنشاء حساب جديد';
+                toggleBtn.textContent = 'لديك حساب بالفعل؟ تسجيل الدخول';
+            }
+        });
+
+        // Login form submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Check for admin login
+            if (username === 'admin' && password === 'admin123') {
+                loginAsAdmin(username);
+            } else if (username) {
+                loginAsUser(username, '1'); // Default to year 1 for demo
+            }
+        });
+
+        // Register form submission
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('regUsername').value;
+            const email = document.getElementById('regEmail').value;
+            const year = document.getElementById('regYear').value;
+            const password = document.getElementById('regPassword').value;
+            
+            if (username && email && year && password) {
+                // Save user data (in real app, this would be sent to server)
+                localStorage.setItem('userData', JSON.stringify({
+                    username: username,
+                    email: email,
+                    year: year
+                }));
+                
+                loginAsUser(username, year);
+            }
+        });
+
+        function loginAsUser(username, year) {
+            currentUser = { username: username, year: year, role: 'user' };
+            
+            document.getElementById('loginModal').classList.add('hidden');
+            document.getElementById('welcomeUsername').textContent = username;
+            document.getElementById('welcomePopup').classList.remove('hidden');
+            
+            // Update UI for logged in user
+            document.getElementById('loginBtn').classList.add('hidden');
+            document.getElementById('userMenu').classList.remove('hidden');
+            document.getElementById('userDisplayName').textContent = username;
+            document.getElementById('userInitial').textContent = username.charAt(0).toUpperCase();
+            document.getElementById('dropdownUsername').textContent = username;
+            document.getElementById('dropdownYear').textContent = `السنة ${getYearName(year)}`;
+            
+            // Show sidebar tabs
+            document.getElementById('sidebarTabs').classList.remove('hidden');
+            
+            // Show notifications badge
+            document.getElementById('notificationBadge').classList.remove('hidden');
+            document.getElementById('notificationBadge').textContent = '2';
+            
+            // Filter exams by user year
+            filterExamsByYear(year);
+        }
+
+        function loginAsAdmin(username) {
+            currentUser = { username: username, role: 'admin' };
+            
+            document.getElementById('loginModal').classList.add('hidden');
+            
+            // Show admin dashboard
+            showAdminDashboard();
+        }
+
+        function getYearName(year) {
+            const yearNames = {
+                '1': 'الأولى',
+                '2': 'الثانية', 
+                '3': 'الثالثة',
+                '4': 'الرابعة',
+                '5': 'الخامسة'
+            };
+            return yearNames[year] || 'الأولى';
+        }
+
+        function filterExamsByYear(year) {
+            // This would filter exams based on user's year
+            // For demo, we'll show all exams
+        }
+
+        function showAdminDashboard() {
+            document.getElementById('contentArea').innerHTML = `
+                <div class="fade-in">
+                    <div class="flex items-center justify-between mb-8">
+                        <h2 class="text-3xl font-bold text-gray-900">لوحة تحكم الإدارة</h2>
+                        <div class="flex gap-4">
+                            <div class="bg-purple-100 px-4 py-2 rounded-lg">
+                                <span class="text-purple-600 font-semibold">👥 ${Math.floor(Math.random() * 150) + 50} طالب</span>
+                            </div>
+                            <div class="bg-blue-100 px-4 py-2 rounded-lg">
+                                <span class="text-blue-600 font-semibold">📅 ${Math.floor(Math.random() * 10) + 5} امتحان</span>
+                            </div>
+                            <div class="bg-green-100 px-4 py-2 rounded-lg">
+                                <span class="text-green-600 font-semibold">💬 ${Math.floor(Math.random() * 20) + 3} رسالة</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border hover:shadow-md transition-shadow cursor-pointer" onclick="showAnnouncementManagement()">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center ml-4">
+                                    <span class="text-2xl">📢</span>
+                                </div>
+                                <h3 class="text-lg font-semibold text-gray-900">إدارة الإعلانات</h3>
+                            </div>
+                            <p class="text-gray-600 text-sm">تعديل التحديثات والإعلانات الأكاديمية</p>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-xl shadow-sm border hover:shadow-md transition-shadow cursor-pointer" onclick="showExamManagement()">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center ml-4">
+                                    <span class="text-2xl">📅</span>
+                                </div>
+                                <h3 class="text-lg font-semibold text-gray-900">إدارة الامتحانات</h3>
+                            </div>
+                            <p class="text-gray-600 text-sm">إضافة وتعديل وحذف الامتحانات</p>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-xl shadow-sm border hover:shadow-md transition-shadow cursor-pointer" onclick="showUserManagement()">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center ml-4">
+                                    <span class="text-2xl">👥</span>
+                                </div>
+                                <h3 class="text-lg font-semibold text-gray-900">إدارة المستخدمين</h3>
+                            </div>
+                            <p class="text-gray-600 text-sm">عرض وإدارة حسابات الطلاب</p>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-xl shadow-sm border hover:shadow-md transition-shadow cursor-pointer" onclick="showChatManagement()">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center ml-4">
+                                    <span class="text-2xl">💬</span>
+                                </div>
+                                <h3 class="text-lg font-semibold text-gray-900">إدارة الرسائل</h3>
+                            </div>
+                            <p class="text-gray-600 text-sm">الرد على رسائل الطلاب</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        document.getElementById('closeWelcome').addEventListener('click', function() {
+            document.getElementById('welcomePopup').classList.add('hidden');
+        });
+
+        // Notifications functionality
+        document.getElementById('notificationBtn').addEventListener('click', function() {
+            const popup = document.getElementById('notificationsPopup');
+            popup.classList.toggle('hidden');
+        });
+
+        document.getElementById('closeNotifications').addEventListener('click', function() {
+            document.getElementById('notificationsPopup').classList.add('hidden');
+        });
+
+        // Profile dropdown
+        document.getElementById('profileBtn').addEventListener('click', function() {
+            document.getElementById('profileDropdown').classList.toggle('hidden');
+        });
+
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            currentUser = null;
+            document.getElementById('userMenu').classList.add('hidden');
+            document.getElementById('loginBtn').classList.remove('hidden');
+            document.getElementById('profileDropdown').classList.add('hidden');
+            
+            // Reset to main page
+            location.reload();
+        });
+
+        // Sidebar tabs functionality
+        document.getElementById('academicTab').addEventListener('click', function() {
+            switchTab('academic');
+        });
+
+        document.getElementById('examsTab').addEventListener('click', function() {
+            switchTab('exams');
+        });
+
+        document.getElementById('chatTab').addEventListener('click', function() {
+            switchTab('chat');
+        });
+
+        function switchTab(tab) {
+            // Reset all tabs
+            document.querySelectorAll('[id$="Tab"]').forEach(btn => {
+                btn.classList.remove('bg-purple-600', 'text-white');
+                btn.classList.add('text-gray-600');
+            });
+            
+            // Hide all content
+            document.getElementById('academicContent').classList.add('hidden');
+            document.getElementById('examsContent').classList.add('hidden');
+            document.getElementById('chatContent').classList.add('hidden');
+            
+            // Show selected tab and content
+            document.getElementById(tab + 'Tab').classList.add('bg-purple-600', 'text-white');
+            document.getElementById(tab + 'Tab').classList.remove('text-gray-600');
+            document.getElementById(tab + 'Content').classList.remove('hidden');
+        }
+
+        // Chat functionality
+        document.getElementById('sendChatBtn').addEventListener('click', sendMessage);
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                const chatMessages = document.getElementById('chatMessages');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'bg-blue-100 p-3 rounded-lg ml-8';
+                messageDiv.innerHTML = `
+                    <p class="text-sm text-gray-700">${message}</p>
+                    <span class="text-xs text-gray-500">أنت - ${new Date().toLocaleTimeString('ar-SA', {hour: '2-digit', minute: '2-digit'})}</span>
+                `;
+                
+                chatMessages.appendChild(messageDiv);
+                input.value = '';
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Simulate admin response
+                setTimeout(() => {
+                    const responseDiv = document.createElement('div');
+                    responseDiv.className = 'bg-purple-100 p-3 rounded-lg mr-8';
+                    responseDiv.innerHTML = `
+                        <p class="text-sm text-gray-700">شكراً لك على رسالتك. سنقوم بالرد عليك قريباً.</p>
+                        <span class="text-xs text-gray-500">الإدارة - ${new Date().toLocaleTimeString('ar-SA', {hour: '2-digit', minute: '2-digit'})}</span>
+                    `;
+                    chatMessages.appendChild(responseDiv);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 2000);
+            }
+        }
+
+        // Admin functions
+        window.showAnnouncementManagement = function() {
+            document.getElementById('contentArea').innerHTML = `
+                <div class="fade-in">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-2xl font-bold text-gray-900">إدارة التحديثات والإعلانات</h2>
+                        <button onclick="showAddAnnouncementForm()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg">
+                            ➕ إضافة إعلان جديد
+                        </button>
+                    </div>
+                    
+                    <div class="grid gap-6">
+                        <!-- Current Announcement -->
+                        <div class="bg-white rounded-xl shadow-sm p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold text-gray-900">الإعلان الحالي</h3>
+                                <div class="flex gap-2">
+                                    <button onclick="editCurrentAnnouncement()" class="text-blue-600 hover:text-blue-800 px-3 py-1 rounded border border-blue-200">
+                                        ✏️ تعديل
+                                    </button>
+                                    <button onclick="deleteCurrentAnnouncement()" class="text-red-600 hover:text-red-800 px-3 py-1 rounded border border-red-200">
+                                        🗑️ حذف
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg p-4 text-white">
+                                <h4 class="font-bold mb-2">📢 التحديثات والإعلانات الأكاديمية</h4>
+                                <p class="opacity-90">مرحباً بكم في المنصة الأكاديمية الجديدة! تم إضافة محتوى جديد للسنة الثالثة.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Announcement History -->
+                        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                            <div class="px-6 py-4 border-b border-gray-200">
+                                <h3 class="text-lg font-semibold text-gray-900">سجل الإعلانات السابقة</h3>
+                            </div>
+                            <div class="divide-y divide-gray-200">
+                                <div class="p-6">
+                                    <div class="flex items-start justify-between">
+                                        <div class="flex-1">
+                                            <h4 class="font-medium text-gray-900 mb-2">إعلان بداية الفصل الدراسي</h4>
+                                            <p class="text-gray-600 text-sm mb-2">نرحب بجميع الطلاب في بداية الفصل الدراسي الجديد. تم تحديث جميع المواد الأكاديمية.</p>
+                                            <span class="text-xs text-gray-500">تم النشر: 2024-01-01</span>
+                                        </div>
+                                        <div class="flex gap-2 mr-4">
+                                            <button class="text-blue-600 hover:text-blue-800 text-sm">استعادة</button>
+                                            <button class="text-red-600 hover:text-red-800 text-sm">حذف نهائي</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <div class="flex items-start justify-between">
+                                        <div class="flex-1">
+                                            <h4 class="font-medium text-gray-900 mb-2">تحديث مواد السنة الثانية</h4>
+                                            <p class="text-gray-600 text-sm mb-2">تم إضافة ملخصات جديدة وتسجيلات محاضرات لمواد السنة الثانية.</p>
+                                            <span class="text-xs text-gray-500">تم النشر: 2023-12-15</span>
+                                        </div>
+                                        <div class="flex gap-2 mr-4">
+                                            <button class="text-blue-600 hover:text-blue-800 text-sm">استعادة</button>
+                                            <button class="text-red-600 hover:text-red-800 text-sm">حذف نهائي</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        window.showExamManagement = function() {
+            document.getElementById('contentArea').innerHTML = `
+                <div class="fade-in">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-2xl font-bold text-gray-900">إدارة الامتحانات</h2>
+                        <button onclick="showAddExamForm()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg">
+                            ➕ إضافة امتحان جديد
+                        </button>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">المادة</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">السنة</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">التاريخ</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الوقت</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-6 py-4 text-sm text-gray-900">التشريح</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">الأولى</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">2024-01-15</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">10:00 ص</td>
+                                    <td class="px-6 py-4 text-sm">
+                                        <button class="text-blue-600 hover:text-blue-800 ml-3">تعديل</button>
+                                        <button class="text-red-600 hover:text-red-800">حذف</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 text-sm text-gray-900">علم وظائف الأعضاء</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">الأولى</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">2024-01-20</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">2:00 م</td>
+                                    <td class="px-6 py-4 text-sm">
+                                        <button class="text-blue-600 hover:text-blue-800 ml-3">تعديل</button>
+                                        <button class="text-red-600 hover:text-red-800">حذف</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        };
+
+        window.showUserManagement = function() {
+            document.getElementById('contentArea').innerHTML = `
+                <div class="fade-in">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">إدارة المستخدمين</h2>
+                    
+                    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">اسم المستخدم</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">البريد الإلكتروني</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">السنة الدراسية</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">آخر دخول</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">النشاط</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-6 py-4 text-sm text-gray-900">أحمد محمد</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">ahmed@example.com</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">الثالثة</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">منذ ساعة</td>
+                                    <td class="px-6 py-4 text-sm">
+                                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">نشط</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 text-sm text-gray-900">فاطمة علي</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">fatima@example.com</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">الثانية</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">منذ يوم</td>
+                                    <td class="px-6 py-4 text-sm">
+                                        <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs">غير متصل</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        };
+
+        // Sidebar navigation
+        document.querySelectorAll('.year-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const content = this.nextElementSibling;
+                const arrow = this.querySelector('span:last-child');
+                
+                if (content.classList.contains('hidden')) {
+                    content.classList.remove('hidden');
+                    content.classList.add('slide-in');
+                    arrow.style.transform = 'rotate(180deg)';
+                } else {
+                    content.classList.add('hidden');
+                    arrow.style.transform = 'rotate(0deg)';
+                }
+            });
+        });
+
+        document.querySelectorAll('.semester-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const content = this.nextElementSibling;
+                const arrow = this.querySelector('span:last-child');
+                
+                if (content.classList.contains('hidden')) {
+                    content.classList.remove('hidden');
+                    content.classList.add('slide-in');
+                    arrow.style.transform = 'rotate(180deg)';
+                } else {
+                    content.classList.add('hidden');
+                    arrow.style.transform = 'rotate(0deg)';
+                }
+            });
+        });
+
+        // Content buttons
+        document.querySelectorAll('.content-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const type = this.dataset.type;
+                const typeNames = {
+                    'slides': 'السلايدات',
+                    'recordings': 'الريكوردات', 
+                    'summaries': 'الملخصات'
+                };
+                const typeIcons = {
+                    'slides': '📑',
+                    'recordings': '🎙️',
+                    'summaries': '📝'
+                };
+                
+                document.getElementById('contentArea').innerHTML = `
+                    <div class="fade-in">
+                        <div class="flex items-center mb-6">
+                            <span class="text-3xl ml-3">${typeIcons[type]}</span>
+                            <h2 class="text-2xl font-bold text-gray-900">${typeNames[type]}</h2>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="bg-purple-50 p-6 rounded-lg hover:shadow-md transition-shadow cursor-pointer">
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="text-2xl">${typeIcons[type]}</span>
+                                    <span class="text-xs text-purple-600 bg-purple-100 px-2 py-1 rounded">جديد</span>
+                                </div>
+                                <h3 class="font-semibold text-gray-900 mb-2">مادة التشريح</h3>
+                                <p class="text-sm text-gray-600 mb-3">محتوى شامل لمادة التشريح</p>
+                                <button class="text-purple-600 hover:text-purple-700 text-sm font-medium">تحميل →</button>
+                            </div>
+                            <div class="bg-purple-50 p-6 rounded-lg hover:shadow-md transition-shadow cursor-pointer">
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="text-2xl">${typeIcons[type]}</span>
+                                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">محدث</span>
+                                </div>
+                                <h3 class="font-semibold text-gray-900 mb-2">علم وظائف الأعضاء</h3>
+                                <p class="text-sm text-gray-600 mb-3">دراسة وظائف أعضاء الحيوان</p>
+                                <button class="text-purple-600 hover:text-purple-700 text-sm font-medium">تحميل →</button>
+                            </div>
+                            <div class="bg-purple-50 p-6 rounded-lg hover:shadow-md transition-shadow cursor-pointer">
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="text-2xl">${typeIcons[type]}</span>
+                                </div>
+                                <h3 class="font-semibold text-gray-900 mb-2">الكيمياء الحيوية</h3>
+                                <p class="text-sm text-gray-600 mb-3">أساسيات الكيمياء الحيوية</p>
+                                <button class="text-purple-600 hover:text-purple-700 text-sm font-medium">تحميل →</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('uploadArea').classList.remove('hidden');
+            });
+        });
+
+        // File upload
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const files = e.target.files;
+            if (files.length > 0) {
+                alert(`تم اختيار ${files.length} ملف للرفع`);
+            }
+        });
+
+        // Announcement management functions
+        window.showAddAnnouncementForm = function() {
+            document.getElementById('contentArea').innerHTML = `
+                <div class="fade-in">
+                    <div class="flex items-center mb-6">
+                        <button onclick="showAnnouncementManagement()" class="text-purple-600 hover:text-purple-700 ml-4">
+                            ← العودة
+                        </button>
+                        <h2 class="text-2xl font-bold text-gray-900">إضافة إعلان جديد</h2>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-sm p-8">
+                        <form id="announcementForm" class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">عنوان الإعلان</label>
+                                <input type="text" id="announcementTitle" required
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                       placeholder="مثال: التحديثات والإعلانات الأكاديمية">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">نص الإعلان</label>
+                                <textarea id="announcementText" required rows="4"
+                                          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                          placeholder="اكتب محتوى الإعلان هنا..."></textarea>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">نوع الإعلان</label>
+                                    <select id="announcementType" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                        <option value="general">عام</option>
+                                        <option value="academic">أكاديمي</option>
+                                        <option value="exam">امتحانات</option>
+                                        <option value="urgent">عاجل</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">السنوات المستهدفة</label>
+                                    <select id="targetYears" multiple class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                        <option value="all">جميع السنوات</option>
+                                        <option value="1">السنة الأولى</option>
+                                        <option value="2">السنة الثانية</option>
+                                        <option value="3">السنة الثالثة</option>
+                                        <option value="4">السنة الرابعة</option>
+                                        <option value="5">السنة الخامسة</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <input type="checkbox" id="publishNow" class="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded">
+                                <label for="publishNow" class="mr-2 block text-sm text-gray-900">نشر الإعلان فوراً</label>
+                            </div>
+                            
+                            <div class="flex gap-4">
+                                <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                                    حفظ الإعلان
+                                </button>
+                                <button type="button" onclick="showAnnouncementManagement()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium transition-colors">
+                                    إلغاء
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('announcementForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const title = document.getElementById('announcementTitle').value;
+                const text = document.getElementById('announcementText').value;
+                
+                if (title && text) {
+                    // Update the main announcement
+                    updateMainAnnouncement(title, text);
+                    showAnnouncementManagement();
+                    alert('تم حفظ الإعلان بنجاح!');
+                }
+            });
+        };
+
+        window.editCurrentAnnouncement = function() {
+            document.getElementById('contentArea').innerHTML = `
+                <div class="fade-in">
+                    <div class="flex items-center mb-6">
+                        <button onclick="showAnnouncementManagement()" class="text-purple-600 hover:text-purple-700 ml-4">
+                            ← العودة
+                        </button>
+                        <h2 class="text-2xl font-bold text-gray-900">تعديل الإعلان الحالي</h2>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-sm p-8">
+                        <form id="editAnnouncementForm" class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">عنوان الإعلان</label>
+                                <input type="text" id="editAnnouncementTitle" required
+                                       value="التحديثات والإعلانات الأكاديمية"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">نص الإعلان</label>
+                                <textarea id="editAnnouncementText" required rows="4"
+                                          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">مرحباً بكم في المنصة الأكاديمية الجديدة! تم إضافة محتوى جديد للسنة الثالثة.</textarea>
+                            </div>
+                            
+                            <div class="flex gap-4">
+                                <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                                    حفظ التعديلات
+                                </button>
+                                <button type="button" onclick="showAnnouncementManagement()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium transition-colors">
+                                    إلغاء
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('editAnnouncementForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const title = document.getElementById('editAnnouncementTitle').value;
+                const text = document.getElementById('editAnnouncementText').value;
+                
+                if (title && text) {
+                    updateMainAnnouncement(title, text);
+                    showAnnouncementManagement();
+                    alert('تم تحديث الإعلان بنجاح!');
+                }
+            });
+        };
+
+        window.deleteCurrentAnnouncement = function() {
+            if (confirm('هل أنت متأكد من حذف الإعلان الحالي؟')) {
+                // Hide the announcement section
+                const announcementSection = document.querySelector('.bg-gradient-to-r');
+                if (announcementSection) {
+                    announcementSection.parentElement.style.display = 'none';
+                }
+                alert('تم حذف الإعلان بنجاح!');
+                showAnnouncementManagement();
+            }
+        };
+
+        function updateMainAnnouncement(title, text) {
+            // Update the main announcement on the homepage
+            const announcementSection = document.querySelector('.bg-gradient-to-r');
+            if (announcementSection) {
+                announcementSection.innerHTML = `
+                    <h3 class="text-xl font-bold mb-2">📢 ${title}</h3>
+                    <p class="opacity-90">${text}</p>
+                `;
+            }
+        }
+
+        // Close modals when clicking outside
+        document.getElementById('loginModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.add('hidden');
+            }
+        });
+
+        document.getElementById('welcomePopup').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.add('hidden');
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'977ec8dd52e732ae',t:'MTc1NjY2Njk3MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
